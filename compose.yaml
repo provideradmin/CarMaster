@@ -1,0 +1,44 @@
+services:
+  php:
+    build:
+      context: ./docker
+      target: php-dev
+      args:
+        XDEBUG_ENABLED: ${XDEBUG_ENABLED-false}
+    volumes:
+      - ./:${CODE_MOUNT_PATH}:delegated
+    environment:
+      - PHP_IDE_CONFIG
+      - XDEBUG_CONFIG
+      - DB_HOST=db
+      - DB_NAME=carmaster_db
+      - DB_USER=carmaster_user
+      - DB_PASSWORD=carmaster123
+      - DB_ROOT_PASSWORD=1304
+    depends_on:
+      - db
+  nginx:
+    build:
+      context: ./docker
+      target: nginx-dev
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./:${CODE_MOUNT_PATH}:delegated
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123123123
+      MYSQL_DATABASE: carmaster_db
+      MYSQL_USER: carmaster_user
+      MYSQL_PASSWORD: carmaster123
+    volumes:
+      - db:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: [ "--init-file", "/docker-entrypoint-initdb.d/init.sql" ]
+volumes:
+  db:
