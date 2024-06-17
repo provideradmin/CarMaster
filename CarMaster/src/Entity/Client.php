@@ -6,6 +6,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, OneToMany, Table};
 
 #[Entity]
@@ -27,6 +28,7 @@ class Client
     private string $phone;
 
     #[OneToMany(mappedBy: 'client', targetEntity: Car::class)]
+    #[Ignore] // Игнорируем связанные объекты
     private Collection $cars;
 
     public function __construct(string $name, string $email, string $phone)
@@ -94,4 +96,5 @@ class Client
             $car->setClient(null);
         }
     }
+
 }
