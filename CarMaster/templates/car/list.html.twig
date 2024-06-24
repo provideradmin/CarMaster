@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cars{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Cars</h1>
+
+    <a href="{{ path('create_car') }}" class="btn btn-primary mb-3">Create new car</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Number</th>
+            <th>Client</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for car in cars %}
+            <tr>
+                <td>{{ car.id }}</td>
+                <td>{{ car.type }}</td>
+                <td>{{ car.brand }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.year }}</td>
+                <td>{{ car.number }}</td>
+                <td>{{ car.client.name }}</td>
+                <td>
+                    <a href="{{ path('get_car', {id: car.id}) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ path('edit_car', {id: car.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ path('delete_car', {id: car.id}) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

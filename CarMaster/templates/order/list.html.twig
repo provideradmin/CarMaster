@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Orders</h1>
+
+    <a href="{{ path('create_order') }}" class="btn btn-primary mb-3">Create new order</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Car</th>
+            <th>Creation Date</th>
+            <th>Total Cost</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.client.name }}</td>
+                <td>{{ order.car.brand }} {{ order.car.model }}</td>
+                <td>{{ order.creationDate|date('Y-m-d H:i') }}</td>
+                <td>{{ order.totalCost }}</td>
+                <td>
+                    <a href="{{ path('get_order', {id: order.id}) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ path('edit_order', {id: order.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ path('delete_order', {id: order.id}) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                    <a href="{{ path('get_order_json', {id: order.id}) }}" class="btn btn-secondary btn-sm" target="_blank">JSON</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

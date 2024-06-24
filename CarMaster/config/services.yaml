@@ -24,3 +24,19 @@ services:
     # please note that last definitions always *replace* previous ones
     Faker\Generator:
         factory: [ 'Faker\Factory', 'create' ]
+
+    app.serializer:
+        class: Symfony\Component\Serializer\Serializer
+        arguments:
+            - ['@serializer.normalizer.object']
+            - ['@serializer.encoder.json']
+
+    serializer.normalizer.object:
+        class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+        arguments:
+            $classMetadataFactory: null
+            $nameConverter: null
+            $propertyTypeExtractor: null
+
+    serializer.encoder.json:
+        class: Symfony\Component\Serializer\Encoder\JsonEncoder

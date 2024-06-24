@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parts{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Parts</h1>
+
+    <a href="{{ path('create_part') }}" class="btn btn-primary mb-3">Create new part</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Quantity</th>
+            <th>Selling Price</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for part in parts %}
+            <tr>
+                <td>{{ part.name }}</td>
+                <td>{{ part.cost }}</td>
+                <td>{{ part.quantity }}</td>
+                <td>{{ part.sellingPrice }}</td>
+                <td>
+                    <a href="{{ path('get_part', {id: part.id}) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ path('edit_part', {id: part.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ path('delete_part', {id: part.id}) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

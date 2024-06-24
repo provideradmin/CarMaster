@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Расходные материалы{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Расходные материалы</h1>
+
+    <a href="{{ path('create_material') }}" class="btn btn-primary mb-3">Добавить новый</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Стоимость</th>
+            <th>Остаток</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for material in materials %}
+            <tr>
+                <td>{{ material.name }}</td>
+                <td>{{ material.cost }}</td>
+                <td>{{ material.quantity }}</td>
+                <td>
+                    <a href="{{ path('get_material', {id: material.id}) }}" class="btn btn-info btn-sm">Просмотр</a>
+                    <a href="{{ path('edit_material', {id: material.id}) }}" class="btn btn-warning btn-sm">Редактировать</a>
+                    <form action="{{ path('delete_material', {id: material.id}) }}" method="post" style="display:inline;" onsubmit="return confirm('Точно удалить?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

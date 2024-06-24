@@ -5,7 +5,6 @@ namespace App\Manager;
 
 use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
-use Faker\Factory;
 
 class ClientManager
 {
@@ -16,19 +15,43 @@ class ClientManager
         $this->entityManager = $entityManager;
     }
 
-    public function createClient(): Client
+    public function createClient(array $data): Client
     {
-        $faker = Factory::create();
-
         $client = new Client(
-            $faker->name,
-            $faker->unique()->safeEmail,
-            $faker->phoneNumber
+            $data['name'],
+            $data['email'],
+            $data['phone']
         );
 
         $this->entityManager->persist($client);
         $this->entityManager->flush();
 
         return $client;
+    }
+
+    public function updateClient(Client $client, array $data): Client
+    {
+        $client->setName($data['name']);
+        $client->setEmail($data['email']);
+        $client->setPhone($data['phone']);
+
+        $this->entityManager->flush();
+
+        return $client;
+    }
+
+    public function deleteClient(Client $client): void
+    {
+        // Удаление клиента вместе с его машинами
+        foreach ($client->getCars() as $car) {
+            $this->entityManager->remove($car);
+        }
+        $this->entityManager->remove($client);
+        $this->entityManager->flush();
+    }
+
+    public function getClient(int $id): ?Client
+    {
+        return $this->entityManager->getRepository(Client::class)->find($id);
     }
 }

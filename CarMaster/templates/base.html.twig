@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CarMaster{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{{ path('list_services') }}">CarMaster <sup>v0.0.1</sup></a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_services') }}">Услуги</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_parts') }}">Запчасти</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_materials') }}">Материалы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_clients') }}">Клиенты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_cars') }}">Автомобили</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('list_orders') }}">Заказы</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    {% block body %}{% endblock %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

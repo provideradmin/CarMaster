@@ -3,49 +3,102 @@
 namespace App\Controller;
 
 use App\Entity\Car;
-use App\Entity\Client;
+use App\Form\CarType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Faker\Factory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CarController extends AbstractController
 {
-    #[Route('/create-car', name: 'create_car')]
-    public function createCar(EntityManagerInterface $entityManager): JsonResponse
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $faker = Factory::create();
+        $this->entityManager = $entityManager;
+    }
 
-        // Получаем случайного клиента из базы
-        $clientRepository = $entityManager->getRepository(Client::class);
-        $clients = $clientRepository->findAll();
+    #[Route('/cars', name: 'list_cars', methods: ['GET'])]
+    public function listCars(): Response
+    {
+        $cars = $this->entityManager->getRepository(Car::class)->findAll();
 
-        if (count($clients) === 0) {
-            return new JsonResponse(['error' => 'No clients found'], 404);
+        return $this->render('car/list.html.twig', [
+            'cars' => $cars,
+        ]);
+    }
+
+    #[Route('/cars/{id}', name: 'get_car', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function getCar(int $id): Response
+    {
+        $car = $this->entityManager->getRepository(Car::class)->find($id);
+
+        if (!$car) {
+            throw $this->createNotFoundException('Car not found');
         }
 
-        $client = $faker->randomElement($clients);
+        return $this->render('car/show.html.twig', [
+            'car' => $car,
+        ]);
+    }
 
+    #[Route('/create-car', name: 'create_car', methods: ['GET', 'POST'])]
+    public function createCar(Request $request): Response
+    {
         $car = new Car();
-        $car->setType($faker->randomElement(['Sedan', 'SUV', 'Hatchback']));
-        $car->setBrand($faker->company());
-        $car->setModel($faker->word());
-        $car->setYear($faker->numberBetween(1990, 2024));
-        $car->setNumber($faker->regexify('[A-Z]{3}[0-9]{3}'));
-        $car->setClient($client);
 
-        $entityManager->persist($car);
-        $entityManager->flush();
+        $form = $this->createForm(CarType::class, $car);
+        $form->handleRequest($request);
 
-        return new JsonResponse([
-            'id' => $car->getId(),
-            'type' => $car->getType(),
-            'brand' => $car->getBrand(),
-            'model' => $car->getModel(),
-            'year' => $car->getYear(),
-            'number' => $car->getNumber(),
-            'client' => $car->getClient()->getId(),
-        ], 201);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($car);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('list_cars');
+        }
+
+        return $this->render('car/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/cars/{id}/edit', name: 'edit_car', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function editCar(int $id, Request $request): Response
+    {
+        $car = $this->entityManager->getRepository(Car::class)->find($id);
+
+        if (!$car) {
+            throw $this->createNotFoundException('Car not found');
+        }
+
+        $form = $this->createForm(CarType::class, $car);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('list_cars');
+        }
+
+        return $this->render('car/edit.html.twig', [
+            'form' => $form->createView(),
+            'car' => $car,
+        ]);
+    }
+
+    #[Route('/cars/{id}/delete', name: 'delete_car', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function deleteCar(int $id): Response
+    {
+        $car = $this->entityManager->getRepository(Car::class)->find($id);
+
+        if (!$car) {
+            throw $this->createNotFoundException('Car not found');
+        }
+
+        $this->entityManager->remove($car);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('list_cars');
     }
 }

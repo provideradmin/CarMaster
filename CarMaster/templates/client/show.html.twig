@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client Details{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Client Details</h1>
+
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Name:</strong> {{ client.name }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ client.email }}</li>
+        <li class="list-group-item"><strong>Phone:</strong> {{ client.phone }}</li>
+        <li class="list-group-item"><strong>Cars:</strong>
+            <ul>
+                {% for car in client.cars %}
+                    <li>{{ car.brand }} {{ car.model }} ({{ car.year }})</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+
+    <div class="mt-3">
+        <a href="{{ path('edit_client', {id: client.id}) }}" class="btn btn-warning">Edit</a>
+        <a href="{{ path('list_clients') }}" class="btn btn-secondary">Back to list</a>
+    </div>
+{% endblock %}

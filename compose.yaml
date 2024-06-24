@@ -6,7 +6,7 @@ services:
       args:
         XDEBUG_ENABLED: ${XDEBUG_ENABLED-false}
     volumes:
-      - ./:${CODE_MOUNT_PATH}:delegated
+      - ./:/home/symfony/:delegated
     environment:
       - PHP_IDE_CONFIG
       - XDEBUG_CONFIG
@@ -26,7 +26,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:${CODE_MOUNT_PATH}:delegated
+      - ./:/home/symfony/:delegated
   db:
     image: mysql:8
     ports:

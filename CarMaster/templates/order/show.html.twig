@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">Order Details</h1>
+
+    <ul class="list-group">
+        <li class="list-group-item"><strong>ID:</strong> {{ order.id }}</li>
+        <li class="list-group-item"><strong>Client:</strong> {{ order.client.name }}</li>
+        <li class="list-group-item"><strong>Car:</strong> {{ order.car.brand }} {{ order.car.model }}</li>
+        <li class="list-group-item"><strong>Creation Date:</strong> {{ order.creationDate|date('Y-m-d H:i') }}</li>
+        <li class="list-group-item"><strong>Total Cost:</strong> {{ order.totalCost }}</li>
+        <li class="list-group-item"><strong>Services:</strong>
+            <ul>
+                {% for service in order.services %}
+                    <li>{{ service.name }} - {{ service.cost }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li class="list-group-item"><strong>Parts:</strong>
+            <ul>
+                {% for part in order.parts %}
+                    <li>{{ part.name }} - {{ part.cost }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li class="list-group-item"><strong>Materials:</strong>
+            <ul>
+                {% for material in order.materials %}
+                    <li>{{ material.name }} - {{ material.cost }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+
+    <div class="mt-3">
+        <a href="{{ path('edit_order', {id: order.id}) }}" class="btn btn-warning">Edit</a>
+        <a href="{{ path('list_orders') }}" class="btn btn-secondary">Back to list</a>
+    </div>
+{% endblock %}

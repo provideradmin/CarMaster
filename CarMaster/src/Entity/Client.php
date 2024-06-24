@@ -5,9 +5,8 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
-use Symfony\Component\Serializer\Annotation\Ignore;
 use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, OneToMany, Table};
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[Entity]
 #[Table(name: 'client')]
@@ -15,7 +14,7 @@ class Client
 {
     #[Id]
     #[GeneratedValue]
-    #[Column(type: Types::INTEGER)]
+    #[Column(type: 'integer')]
     private int $id;
 
     #[Column(length: 255)]
@@ -27,8 +26,7 @@ class Client
     #[Column(length: 20)]
     private string $phone;
 
-    #[OneToMany(mappedBy: 'client', targetEntity: Car::class)]
-    #[Ignore] // Игнорируем связанные объекты
+    #[OneToMany(mappedBy: 'client', targetEntity: Car::class, cascade: ['persist', 'remove'])]
     private Collection $cars;
 
     public function __construct(string $name, string $email, string $phone)
@@ -38,8 +36,6 @@ class Client
         $this->phone = $phone;
         $this->cars = new ArrayCollection();
     }
-
-    // Getters and setters...
 
     public function getId(): int
     {
@@ -76,6 +72,7 @@ class Client
         $this->phone = $phone;
     }
 
+    #[Ignore]
     public function getCars(): Collection
     {
         return $this->cars;
@@ -96,5 +93,4 @@ class Client
             $car->setClient(null);
         }
     }
-
 }
