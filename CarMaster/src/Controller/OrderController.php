@@ -4,23 +4,29 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Form\OrderType;
-use App\Manager\OrderCalculatorManager;
+use App\Manager\OrderCalculatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Builder\OrderResponseDataBuilder;
 
 class OrderController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
-    private OrderCalculatorManager $orderCalculator;
+    private OrderCalculatorInterface $orderCalculator;
+    private OrderResponseDataBuilder $orderResponseDataBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager, OrderCalculatorManager $orderCalculator)
+    public function __construct(EntityManagerInterface $entityManager,
+                                OrderCalculatorInterface $orderCalculator,
+                                OrderResponseDataBuilder $orderResponseDataBuilder
+    )
     {
         $this->entityManager = $entityManager;
         $this->orderCalculator = $orderCalculator;
+        $this->orderResponseDataBuilder = $orderResponseDataBuilder;
     }
 
     #[Route('/orders', name: 'list_orders', methods: ['GET'])]
@@ -58,26 +64,11 @@ class OrderController extends AbstractController
 
         $totalCost = $this->orderCalculator->calculateTotalCost($order);
 
-        $orderData = [
-            'id' => $order->getId(),
-            'client' => $order->getClient()->getName(),
-            'car' => $order->getCar()->getBrand() . ' ' . $order->getCar()->getModel(),
-            'creationDate' => $order->getCreationDate()->format('Y-m-d H:i:s'),
-            'totalCost' => $totalCost,
-            'services' => array_map(function ($service) {
-                return ['name' => $service->getName(), 'cost' => $service->getCost()];
-            }, $order->getServices()->toArray()),
-            'parts' => array_map(function ($part) {
-                return ['name' => $part->getName(), 'cost' => $part->getCost()];
-            }, $order->getParts()->toArray()),
-            'materials' => array_map(function ($material) {
-                return ['name' => $material->getName(), 'cost' => $material->getCost()];
-            }, $order->getMaterials()->toArray()),
-        ];
+        $orderData = $this->orderResponseDataBuilder->build($order, $totalCost);
 
         // Decode JSON to prevent escaping UTF-8 characters
         return $this->render('order/json.html.twig', [
-            'orderData' => json_decode(json_encode($orderData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), true),
+            'orderData' => json_encode($orderData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         ]);
 
     }
@@ -92,22 +83,7 @@ class OrderController extends AbstractController
 
         $totalCost = $this->orderCalculator->calculateTotalCost($order);
 
-        $orderData = [
-            'id' => $order->getId(),
-            'client' => $order->getClient()->getName(),
-            'car' => $order->getCar()->getBrand() . ' ' . $order->getCar()->getModel(),
-            'creationDate' => $order->getCreationDate()->format('Y-m-d H:i:s'),
-            'totalCost' => $totalCost,
-            'services' => array_map(function ($service) {
-                return ['name' => $service->getName(), 'cost' => $service->getCost()];
-            }, $order->getServices()->toArray()),
-            'parts' => array_map(function ($part) {
-                return ['name' => $part->getName(), 'cost' => $part->getCost()];
-            }, $order->getParts()->toArray()),
-            'materials' => array_map(function ($material) {
-                return ['name' => $material->getName(), 'cost' => $material->getCost()];
-            }, $order->getMaterials()->toArray()),
-        ];
+        $orderData = $this->orderResponseDataBuilder->build($order, $totalCost);
 
         return new JsonResponse($orderData, Response::HTTP_OK, [],);
     }

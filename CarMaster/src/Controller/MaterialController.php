@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Material;
+use App\Form\MaterialType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,20 +50,20 @@ class MaterialController extends AbstractController
     #[Route('/create-material', name: 'create_material', methods: ['GET', 'POST'])]
     public function createMaterial(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            $name = $request->request->get('name');
-            $cost = (float)$request->request->get('cost');
-            $quantity = (int)$request->request->get('quantity');
+        $material = new Material();
+        $form = $this->createForm(MaterialType::class, $material);
+        $form->handleRequest($request);
 
-            $material = new Material($name, $cost, $quantity);
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($material);
             $this->entityManager->flush();
 
             return $this->redirectToRoute('list_materials');
         }
 
-        return $this->render('material/create.html.twig');
+        return $this->render('material/create.html.twig',[
+                'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/materials/{id}/edit', name: 'edit_material', methods: ['GET', 'POST'])]
@@ -74,22 +75,21 @@ class MaterialController extends AbstractController
             throw $this->createNotFoundException('Material not found');
         }
 
-        if ($request->isMethod('POST')) {
-            $name = $request->request->get('name');
-            $cost = (float)$request->request->get('cost');
-            $quantity = (int)$request->request->get('quantity');
+        $form = $this->createForm(MaterialType::class, $material);
+        $form->handleRequest($request);
 
-            $material->setName($name);
-            $material->setCost($cost);
-            $material->setQuantity($quantity);
-
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($material);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('list_materials');
+            return $this->redirectToRoute('list_materials', [
+                'form' => $form->createView(),
+            ]);
         }
 
         return $this->render('material/edit.html.twig', [
             'material' => $material,
+            'form' => $form->createView(),
         ]);
     }
 

@@ -1,13 +1,11 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Edit Car{% endblock %}
+{% import 'macros/form_macros.html.twig' as form_macros %}
+{% block title %}Редактировать авто{% endblock %}
 
 {% block body %}
-    <h1 class="my-4">Edit Car</h1>
+    <h1 class="my-4">Редактировать авто</h1>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ path('list_cars') }}" class="btn btn-secondary">Back to list</a>
-    {{ form_end(form) }}
+    {{ form_macros.render_form(form) }}
+    <a href="{{ path('list_cars') }}" class="btn btn-secondary">Назад к списку</a>
+
 {% endblock %}

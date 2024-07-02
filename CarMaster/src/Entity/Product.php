@@ -35,15 +35,6 @@ abstract class Product
     #[Column(type: Types::INTEGER)]
     protected int $quantity;
 
-    public function __construct(string $name, float $cost, int $quantity)
-    {
-        $this->name = $name;
-        $this->cost = $cost;
-        $this->quantity = $quantity;
-    }
-
-    // Getters and setters...
-
     public function getId(): int
     {
         return $this->id;

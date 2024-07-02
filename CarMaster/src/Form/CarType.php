@@ -18,33 +18,33 @@ class CarType extends AbstractType
     {
         $builder
             ->add('type', null, [
-                'label' => 'Type',
+                'label' => 'Тип авто',
                 'required' => true,
             ])
             ->add('brand', null, [
-                'label' => 'Brand',
+                'label' => 'Марка',
                 'required' => true,
             ])
             ->add('model', null, [
-                'label' => 'Model',
+                'label' => 'Модель',
                 'required' => true,
             ])
             ->add('year', null, [
-                'label' => 'Year',
+                'label' => 'Год',
                 'required' => true,
             ])
             ->add('number', null, [
-                'label' => 'Number',
+                'label' => 'Номер',
                 'required' => true,
             ])
             ->add('client', EntityType::class, [
                 'class' => Client::class,
                 'choice_label' => 'name',
-                'placeholder' => 'Select a client',
+                'placeholder' => 'Укажите владельца',
                 'required' => true,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Save',
+                'label' => 'Сохранить авто',
                 'attr' => ['class' => 'btn btn-primary'],
             ]);
     }

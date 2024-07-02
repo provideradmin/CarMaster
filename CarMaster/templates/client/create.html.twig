@@ -1,26 +1,9 @@
 {% extends 'base.html.twig' %}
-
+{% import 'macros/form_macros.html.twig' as form_macros %}
 {% block title %}Create Client{% endblock %}
 
 {% block body %}
     <h1 class="my-4">Create Client</h1>
 
-    <form method="post">
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone:</label>
-            <input type="text" id="phone" name="phone" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Create</button>
-            <a href="{{ path('list_clients') }}" class="btn btn-secondary">Back to list</a>
-        </div>
-    </form>
+    {{ form_macros.render_form(form) }}
 {% endblock %}

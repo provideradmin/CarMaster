@@ -5,7 +5,7 @@
 {% block body %}
     <h1 class="my-4">Order JSON</h1>
 
-    <pre>{{ orderData|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}</pre>
+    <pre>{{ orderData|raw }}</pre>
 
     <a href="{{ path('list_orders') }}" class="btn btn-secondary">Back to list</a>
 {% endblock %}

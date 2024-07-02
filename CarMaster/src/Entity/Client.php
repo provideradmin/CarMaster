@@ -29,13 +29,13 @@ class Client
     #[OneToMany(mappedBy: 'client', targetEntity: Car::class, cascade: ['persist', 'remove'])]
     private Collection $cars;
 
-    public function __construct(string $name, string $email, string $phone)
+    /*public function __construct(string $name, string $email, string $phone)
     {
         $this->name = $name;
         $this->email = $email;
         $this->phone = $phone;
         $this->cars = new ArrayCollection();
-    }
+    }*/
 
     public function getId(): int
     {

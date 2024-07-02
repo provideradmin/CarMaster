@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Form\ClientType;
 use App\Manager\ClientManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,14 +49,21 @@ class ClientController extends AbstractController
     #[Route('/create-client', name: 'create_client', methods: ['GET', 'POST'])]
     public function createClient(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            $data = $request->request->all();
-            $client = $this->clientManager->createClient($data);
+
+        $client = new Client();
+        $form = $this->createForm(ClientType::class, $client);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($client);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_clients');
         }
 
-        return $this->render('client/create.html.twig');
+        return $this->render('client/create.html.twig',[
+        'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/clients/{id}/edit', name: 'edit_client', methods: ['GET', 'POST'])]
@@ -67,14 +75,18 @@ class ClientController extends AbstractController
             throw $this->createNotFoundException('Client not found');
         }
 
-        if ($request->isMethod('POST')) {
-            $data = $request->request->all();
-            $client = $this->clientManager->updateClient($client, $data);
+        $form = $this->createForm(ClientType::class, $client);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($client);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_clients');
         }
 
         return $this->render('client/edit.html.twig', [
+            'form' => $form->createView(),
             'client' => $client,
         ]);
     }

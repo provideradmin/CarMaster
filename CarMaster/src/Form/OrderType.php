@@ -25,7 +25,7 @@ class OrderType extends AbstractType
             ->add('client', EntityType::class, [
                 'class' => Client::class,
                 'choice_label' => 'name',
-                'placeholder' => 'Choose a client',
+                'placeholder' => 'Укажите клиента',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('c')
                         ->orderBy('c.name', 'ASC');
@@ -37,7 +37,7 @@ class OrderType extends AbstractType
                 'choice_label' => function (Car $car) {
                     return $car->getBrand() . ' ' . $car->getModel();
                 },
-                'placeholder' => 'Choose a car',
+                'placeholder' => 'Укажите авто',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('c')
                         ->orderBy('c.brand', 'ASC');
@@ -75,7 +75,7 @@ class OrderType extends AbstractType
                 },
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Create Order',
+                'label' => 'Создать заказ',
                 'attr' => ['class' => 'btn btn-primary'],
             ]);
     }

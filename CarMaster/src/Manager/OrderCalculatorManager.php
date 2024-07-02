@@ -5,7 +5,7 @@ namespace App\Manager;
 
 use App\Entity\Order;
 
-class OrderCalculatorManager
+class OrderCalculatorManager implements OrderCalculatorInterface
 {
     public function calculateTotalCost(Order $order): float
     {
