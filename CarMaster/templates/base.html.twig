@@ -8,7 +8,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{{ path('list_services') }}">CarMaster <sup>v0.0.2</sup></a>
+    <a class="navbar-brand" href="{{ path('home') }}">CarMaster <sup>v0.0.2</sup></a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -29,6 +29,23 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('list_orders') }}">Заказы</a>
             </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if app.user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#">{{ app.user.email }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">Выйти</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_login') }}">Войти</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_register') }}">Зарегистрироваться</a>
+                </li>
+            {% endif %}
         </ul>
     </div>
 </nav>

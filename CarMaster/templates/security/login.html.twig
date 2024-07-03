@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <h1>Login</h1>
+    {{ form_start(loginForm) }}
+    {{ form_widget(loginForm) }}
+    <button type="submit" class="btn btn-primary">Login</button>
+    {{ form_end(loginForm) }}
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+{% endblock %}
