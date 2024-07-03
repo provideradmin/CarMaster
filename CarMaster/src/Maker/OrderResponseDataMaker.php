@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Builder;
+namespace App\Maker;
 
 use App\Entity\Order;
 
-class OrderResponseDataBuilder
+class OrderResponseDataMaker
 {
     public function build(Order $order, float $totalCost): array
     {

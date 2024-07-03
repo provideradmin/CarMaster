@@ -11,22 +11,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Builder\OrderResponseDataBuilder;
+use App\Maker\OrderResponseDataMaker;
 
 class OrderController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private OrderCalculatorInterface $orderCalculator;
-    private OrderResponseDataBuilder $orderResponseDataBuilder;
+    private OrderResponseDataMaker $orderResponseDataMaker;
 
     public function __construct(EntityManagerInterface $entityManager,
                                 OrderCalculatorInterface $orderCalculator,
-                                OrderResponseDataBuilder $orderResponseDataBuilder
+                                OrderResponseDataMaker $orderResponseDataBuilder
     )
     {
         $this->entityManager = $entityManager;
         $this->orderCalculator = $orderCalculator;
-        $this->orderResponseDataBuilder = $orderResponseDataBuilder;
+        $this->orderResponseDataMaker = $orderResponseDataBuilder;
     }
 
     #[Route('/orders', name: 'list_orders', methods: ['GET'])]
@@ -64,7 +64,7 @@ class OrderController extends AbstractController
 
         $totalCost = $this->orderCalculator->calculateTotalCost($order);
 
-        $orderData = $this->orderResponseDataBuilder->build($order, $totalCost);
+        $orderData = $this->orderResponseDataMaker->build($order, $totalCost);
 
         // Decode JSON to prevent escaping UTF-8 characters
         return $this->render('order/json.html.twig', [
@@ -83,7 +83,7 @@ class OrderController extends AbstractController
 
         $totalCost = $this->orderCalculator->calculateTotalCost($order);
 
-        $orderData = $this->orderResponseDataBuilder->build($order, $totalCost);
+        $orderData = $this->orderResponseDataMaker->build($order, $totalCost);
 
         return new JsonResponse($orderData, Response::HTTP_OK, [],);
     }
