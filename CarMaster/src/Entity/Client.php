@@ -6,6 +6,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, OneToMany, Table};
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[Entity]
@@ -15,27 +16,29 @@ class Client
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
+    #[Groups(['client:read', 'client:write'])]
     private int $id;
 
     #[Column(length: 255)]
+    #[Groups(['client:read', 'client:write'])]
     private string $name;
 
     #[Column(length: 255)]
+    #[Groups(['client:read', 'client:write'])]
     private string $email;
 
     #[Column(length: 20)]
+    #[Groups(['client:read', 'client:write'])]
     private string $phone;
 
-    #[OneToMany(mappedBy: 'client', targetEntity: Car::class, cascade: ['persist', 'remove'])]
+    #[OneToMany(targetEntity: Car::class, mappedBy: 'client', cascade: ['persist', 'remove'])]
+    #[Ignore] // Исключает cars из сериализации
     private Collection $cars;
 
-    /*public function __construct(string $name, string $email, string $phone)
+    public function __construct()
     {
-        $this->name = $name;
-        $this->email = $email;
-        $this->phone = $phone;
         $this->cars = new ArrayCollection();
-    }*/
+    }
 
     public function getId(): int
     {
