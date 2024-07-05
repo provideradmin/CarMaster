@@ -3,44 +3,41 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, JoinColumn, ManyToOne, Table};
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-#[Entity]
-#[Table(name: 'car')]
+#[ORM\Entity]
+#[ORM\Table(name: 'car')]
 class Car
 {
-    #[Id]
-    #[GeneratedValue]
-    #[Column(type: 'integer')]
-    #[Groups(['car:read', 'car:write'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private int $id;
 
-    #[Column(length: 255)]
+    #[ORM\Column(length: 255)]
     #[Groups(['car:read', 'car:write'])]
     private string $type;
 
-    #[Column(length: 255)]
+    #[ORM\Column(length: 255)]
     #[Groups(['car:read', 'car:write'])]
     private string $brand;
 
-    #[Column(length: 255)]
+    #[ORM\Column(length: 255)]
     #[Groups(['car:read', 'car:write'])]
     private string $model;
 
-    #[Column(type: 'integer')]
+    #[ORM\Column(type: 'integer')]
     #[Groups(['car:read', 'car:write'])]
     private int $year;
 
-    #[Column(length: 20)]
+    #[ORM\Column(length: 20)]
     #[Groups(['car:read', 'car:write'])]
     private string $number;
 
-    #[ManyToOne(targetEntity: Client::class, inversedBy: 'cars')]
-    #[JoinColumn(name: 'client_id', referencedColumnName: 'id')]
     #[Groups(['car:read', 'car:write'])]
-    #[Ignore] // Добавлено, чтобы избежать циклической зависимости
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'cars')]
+    #[ORM\JoinColumn(name: 'client_id', referencedColumnName: 'id')]
     private Client $client;
 
     public function getId(): int
@@ -98,6 +95,7 @@ class Car
         $this->number = $number;
     }
 
+    #[Groups(['car:details'])]
     public function getClient(): Client
     {
         return $this->client;

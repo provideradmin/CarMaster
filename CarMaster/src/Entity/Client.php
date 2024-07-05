@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, OneToMany, Table};
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[Entity]
 #[Table(name: 'client')]
@@ -32,7 +32,7 @@ class Client
     private string $phone;
 
     #[OneToMany(targetEntity: Car::class, mappedBy: 'client', cascade: ['persist', 'remove'])]
-    #[Ignore] // Исключает cars из сериализации
+    #[Ignore]
     private Collection $cars;
 
     public function __construct()
