@@ -6,8 +6,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\{Column, Entity, GeneratedValue, Id, OneToMany, Table};
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Serializer\Attribute as Serialize;
 
 #[Entity]
 #[Table(name: 'client')]
@@ -16,23 +16,23 @@ class Client
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
-    #[Groups(['client:read', 'client:write'])]
+    #[Serialize\Groups(['client:read', 'client:write'])]
     private int $id;
 
     #[Column(length: 255)]
-    #[Groups(['client:read', 'client:write'])]
+    #[Serialize\Groups(['client:read', 'client:write'])]
     private string $name;
 
     #[Column(length: 255)]
-    #[Groups(['client:read', 'client:write'])]
+    #[Serialize\Groups(['client:read', 'client:write'])]
     private string $email;
 
     #[Column(length: 20)]
-    #[Groups(['client:read', 'client:write'])]
+    #[Serialize\Groups(['client:read', 'client:write'])]
     private string $phone;
 
     #[OneToMany(targetEntity: Car::class, mappedBy: 'client', cascade: ['persist', 'remove'])]
-    #[Ignore]
+    #[Serialize\Groups(['client:never'])]
     private Collection $cars;
 
     public function __construct()

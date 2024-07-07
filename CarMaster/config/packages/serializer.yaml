@@ -1,3 +1,4 @@
 framework:
   serializer:
-    enable_annotations: true
+    enabled: true
+    mapping:

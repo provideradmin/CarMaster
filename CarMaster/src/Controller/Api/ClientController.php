@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\ClientDTO;
 use App\Entity\Client;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,7 +56,8 @@ class ClientController extends AbstractController
             return new JsonResponse(['error' => 'Client not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $json = $this->serializer->serialize($client, 'json', [
+        $json = $this->serializer->serialize($client,
+            'json', [
             'groups' => ['client:read'],
             'circular_reference_handler' => function ($object) {
                 return $object->getId();
@@ -68,16 +70,21 @@ class ClientController extends AbstractController
     public function createClient(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $client = new Client();
-        $client->setName($data['name']);
-        $client->setEmail($data['email']);
-        $client->setPhone($data['phone']);
+        $clientDTO = new ClientDTO();
+        $clientDTO->name = $data['name'] ?? '';
+        $clientDTO->email = $data['email'] ?? '';
+        $clientDTO->phone = $data['phone'] ?? '';
 
-        $errors = $this->validator->validate($client);
+        $errors = $this->validator->validate($clientDTO);
         if (count($errors) > 0) {
-            return new JsonResponse(['errors' => (string)$errors], Response::HTTP_BAD_REQUEST);
+            $errorsString = (string) $errors;
+            return new JsonResponse(['error' => $errorsString], Response::HTTP_BAD_REQUEST);
         }
 
+        $client = new Client();
+        $client->setName($clientDTO->name);
+        $client->setEmail($clientDTO->email);
+        $client->setPhone($clientDTO->phone);
         $this->entityManager->persist($client);
         $this->entityManager->flush();
 
