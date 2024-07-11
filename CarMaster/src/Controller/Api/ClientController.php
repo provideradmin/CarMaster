@@ -3,35 +3,38 @@
 namespace App\Controller\Api;
 
 use App\DTO\ClientDTO;
+use App\DTO\ClientUpdateDTO;
 use App\Entity\Client;
+use App\Manager\ClientManager;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/clients')]
+
+#[Route('/clients')]
 class ClientController extends AbstractController
 {
     private ClientRepository $clientRepository;
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
-    private ValidatorInterface $validator;
+    private ClientManager $clientManager;
 
     public function __construct(
-        ClientRepository $clientRepository,
+        ClientRepository       $clientRepository,
         EntityManagerInterface $entityManager,
-        SerializerInterface $serializer,
-        ValidatorInterface $validator
-    ) {
+        SerializerInterface    $serializer,
+        ClientManager $clientManager
+    )
+    {
         $this->clientRepository = $clientRepository;
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
-        $this->validator = $validator;
+        $this->clientManager = $clientManager;
     }
 
     #[Route('', methods: ['GET'])]
@@ -58,83 +61,42 @@ class ClientController extends AbstractController
 
         $json = $this->serializer->serialize($client,
             'json', [
-            'groups' => ['client:read'],
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
-        ]);
+                'groups' => ['client:read'],
+            ]);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('', methods: ['POST'])]
-    public function createClient(Request $request): JsonResponse
+    #[Route('', methods: ['POST'], format: 'json')]
+    public function createClient(
+        #[MapRequestPayload] ClientDTO   $clientDTO,
+    ): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $clientDTO = new ClientDTO();
-        $clientDTO->name = $data['name'] ?? '';
-        $clientDTO->email = $data['email'] ?? '';
-        $clientDTO->phone = $data['phone'] ?? '';
-
-        $errors = $this->validator->validate($clientDTO);
-        if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-            return new JsonResponse(['error' => $errorsString], Response::HTTP_BAD_REQUEST);
-        }
-
-        $client = new Client();
-        $client->setName($clientDTO->name);
-        $client->setEmail($clientDTO->email);
-        $client->setPhone($clientDTO->phone);
-        $this->entityManager->persist($client);
-        $this->entityManager->flush();
-
+        $client = $this->clientManager->createClientFromDTO($clientDTO);
         $json = $this->serializer->serialize($client, 'json', [
             'groups' => ['client:read'],
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
         ]);
         return new JsonResponse($json, Response::HTTP_CREATED, [], true);
     }
 
-    #[Route('/{id}', methods: ['PATCH'])]
-    public function updateClient(int $id, Request $request): JsonResponse
+    #[Route('/{id}', methods: ['PATCH'], format: 'json')]
+    public function update(
+        int                              $id,
+        #[MapRequestPayload] ClientUpdateDTO   $clientUpdateDTO,
+        ClientManager                    $clientManager,
+    ): JsonResponse
     {
         $client = $this->clientRepository->find($id);
         if (!$client) {
             return new JsonResponse(['error' => 'Client not found'], Response::HTTP_NOT_FOUND);
         }
-
-        $data = json_decode($request->getContent(), true);
-
-        if (isset($data['name'])) {
-            $client->setName($data['name']);
-        }
-        if (isset($data['email'])) {
-            $client->setEmail($data['email']);
-        }
-        if (isset($data['phone'])) {
-            $client->setPhone($data['phone']);
-        }
-
-        $errors = $this->validator->validate($client);
-        if (count($errors) > 0) {
-            return new JsonResponse(['errors' => (string)$errors], Response::HTTP_BAD_REQUEST);
-        }
-
-        $this->entityManager->flush();
-
-        $json = $this->serializer->serialize($client, 'json', [
+        $json = $this->serializer->serialize($clientManager->updateClientFromDTO($client, $clientUpdateDTO), 'json', [
             'groups' => ['client:read'],
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
         ]);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     #[Route('/{id}', methods: ['DELETE'])]
-    public function deleteClient(int $id): JsonResponse
+    public function delete(int $id): JsonResponse
     {
         $client = $this->clientRepository->find($id);
         if (!$client) {

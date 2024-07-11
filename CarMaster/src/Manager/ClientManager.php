@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+use App\DTO\ClientDTO;
+use App\DTO\ClientUpdateDTO;
 use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -15,15 +17,39 @@ class ClientManager
         $this->entityManager = $entityManager;
     }
 
-    public function createClient(array $data): Client
+    public function createClient(Client $client): Client
     {
-        $client = new Client(
-            $data['name'],
-            $data['email'],
-            $data['phone']
-        );
 
         $this->entityManager->persist($client);
+        $this->entityManager->flush();
+
+        return $client;
+    }
+
+    public function createClientFromDTO(ClientDTO $clientDTO): Client
+    {
+        $client = new Client();
+        $client->setName($clientDTO->name);
+        $client->setEmail($clientDTO->email);
+        $client->setPhone($clientDTO->phone);
+        $this->entityManager->persist($client);
+        $this->entityManager->flush();
+
+        return $client;
+    }
+
+    public function updateClientFromDTO(Client $client, ClientUpdateDTO $clientUpdateDTO): Client
+    {
+        if ($clientUpdateDTO->name !== null) {
+            $client->setName($clientUpdateDTO->name);
+        }
+        if ($clientUpdateDTO->email !== null) {
+            $client->setEmail($clientUpdateDTO->email);
+        }
+        if ($clientUpdateDTO->phone !== null) {
+            $client->setPhone($clientUpdateDTO->phone);
+        }
+
         $this->entityManager->flush();
 
         return $client;

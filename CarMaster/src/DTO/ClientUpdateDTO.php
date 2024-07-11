@@ -4,20 +4,17 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ClientDTO
+class ClientUpdateDTO
 {
     public function __construct(
-        #[Assert\NotBlank]
         #[Assert\Length(max: 255)]
-        public string $name,
+        public ?string $name  = null,
 
-        #[Assert\NotBlank]
         #[Assert\Email]
-        public string $email,
+        public ?string $email = null,
 
-        #[Assert\NotBlank]
         #[Assert\Length(min: 9, max: 20)]
-        public string $phone)
+        public ?string $phone = null)
     {
     }
 }
