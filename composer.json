@@ -1,0 +1,6 @@
+{
+    "require": {
+        "symfony/cache": "^7.1",
+        "symfony/redis-messenger": "^7.1"
+    }
+}

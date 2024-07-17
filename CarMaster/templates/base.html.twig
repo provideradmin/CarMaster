@@ -8,7 +8,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{{ path('home') }}">CarMaster <sup>v0.15.2</sup></a>
+    <a class="navbar-brand" href="{{ path('home') }}">CarMaster <sup>v0.16.1</sup></a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -30,6 +30,10 @@
                 <a class="nav-link" href="{{ path('list_orders') }}">Заказы</a>
             </li>
         </ul>
+        <form class="form-inline my-2 my-lg-0" id="search-form" action="{{ path('search_results') }}" method="GET">
+            <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск" aria-label="Поиск" id="search-input">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+        </form>
         <ul class="navbar-nav ml-auto">
             {% if app.user %}
                 <li class="nav-item">
@@ -49,15 +53,13 @@
         </ul>
     </div>
 </nav>
-
 <div class="container mt-4">
     {% block body %}{% endblock %}
 </div>
-
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-{% block javascripts %}{% endblock %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+{% block javascripts %}
+{% endblock %}
 </body>
 </html>
