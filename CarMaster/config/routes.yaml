@@ -14,3 +14,7 @@ api_controllers:
     resource: ../src/Controller/Api/
     type: attribute
     prefix: /api
+
+search_results:
+    path: /search
+    controller: App\Controller\SearchController::search
