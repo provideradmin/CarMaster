@@ -38,7 +38,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
     && composer clear-cache
 
 # Setup Xdebug
-ARG XDEBUG_ENABLED=false
+ARG XDEBUG_ENABLED=true
 RUN if $XDEBUG_ENABLED; then pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
