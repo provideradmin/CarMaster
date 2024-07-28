@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block body %}
+    <h1 class="my-4">
+        Результаты поиска для "{{ query }}"
+        {% if fromCache %}
+            <small>(из кеша)</small>
+        {% endif %}
+    </h1>
+
+    {% if results is empty %}
+        <p>Нет результатов по запросу "{{ query }}".</p>
+    {% else %}
+        <ul class="list-group">
+            {% for result in results %}
+                <li class="list-group-item">
+                    <a href="{{ result.url }}">{{ result.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -54,6 +54,7 @@ class Order
         $this->services = new ArrayCollection();
         $this->parts = new ArrayCollection();
         $this->materials = new ArrayCollection();
+        $this->totalCost = 0;
     }
 
     public function getId(): int
